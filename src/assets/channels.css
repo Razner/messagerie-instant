@@ -165,6 +165,10 @@ main {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 
+.channel-image img {    
+  max-height: 75px; 
+}
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -334,18 +338,6 @@ button:disabled {
   color: var(--text-lighter);
   display: flex;
   align-items: center;
-}
-
-.channel-badge {
-  font-size: 0.8em;
-  padding: 3px 8px;
-  border-radius: 12px;
-  background-color: var(--success);
-  color: white;
-}
-
-.channel-badge.private {
-  background-color: var(--primary);
 }
 
 .channel-description {

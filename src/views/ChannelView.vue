@@ -1,24 +1,29 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { createChannel, getChannels, deleteChannel, updateChannelMetadata } from '../stores/channels';
+import { ref, onMounted } from "vue";
+import {
+  createChannel,
+  getChannels,
+  deleteChannel,
+  updateChannelMetadata,
+} from "../stores/channels";
 
+const newChannelImage = ref(null);
 const channels = ref([]);
 const newChannel = ref({
-  name: '',
-  description: '',
-  isPrivate: false
+  name: "",
+  description: "",
 });
 const loading = ref(false);
-const error = ref('');
-const errorDetails = ref('');
-const success = ref('');
+const error = ref("");
+const errorDetails = ref("");
+const success = ref("");
 const deletingChannel = ref(false);
 const editingChannel = ref(false);
 const editChannelId = ref(null);
-const editChannelName = ref('');
-const editChannelDescription = ref('');
+const editChannelName = ref("");
+const editChannelDescription = ref("");
 const editChannelImage = ref(null);
-const editChannelImagePreview = ref('');
+const editChannelImagePreview = ref("");
 const showEditModal = ref(false);
 
 onMounted(async () => {
@@ -27,7 +32,7 @@ onMounted(async () => {
     const response = await getChannels();
     channels.value = response;
   } catch (err) {
-    error.value = 'Erreur lors du chargement des channels';
+    error.value = "Erreur lors du chargement des channels";
     if (err.message) {
       errorDetails.value = `Détail: ${err.message}`;
     }
@@ -39,37 +44,50 @@ onMounted(async () => {
 
 async function handleCreateChannel() {
   if (!newChannel.value.name) {
-    error.value = 'Le nom du channel est requis';
+    error.value = "Le nom du channel est requis";
     return;
   }
 
   try {
     loading.value = true;
-    error.value = '';
-    errorDetails.value = '';
-    success.value = '';
+    error.value = "";
+    errorDetails.value = "";
+    success.value = "";
 
-    const createdChannel = await createChannel(newChannel.value);
-    channels.value.push(createdChannel);
+    if (newChannelImage.value && newChannelImage.value instanceof File) {
+      const formData = new FormData();
+      formData.append("name", newChannel.value.name);
+      if (newChannel.value.description) {
+        formData.append("description", newChannel.value.description);
+      }
+      formData.append("image", newChannelImage.value);
 
-    newChannel.value = {
-      name: '',
-      description: '',
-      isPrivate: false
-    };
+      const response = await instance.post("/protected/channel", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    success.value = 'Votre channel à été créé';
-  } catch (err) {
-    error.value = 'Erreur lors de la création du channel';
+      const imageUrl = response.data.imageUrl;
 
-    if (err.response) {
-      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(err.response.data || 'Pas de détails')}`;
-    } else if (err.request) {
-      errorDetails.value = 'Impossible de se connecter au serveur.';
+      channels.value.push({ ...response.data, imageUrl });
     } else {
-      errorDetails.value = err.message || 'Erreur inconnue';
+      const payloadWithDefaultImage = {
+        ...newChannel.value,
+        imageUrl: "/Konekt.png",
+      };
+      const createdChannel = await createChannel(payloadWithDefaultImage);
+      channels.value.push(createdChannel);
     }
 
+    newChannel.value = {
+      name: "",
+      description: "",
+    };
+    newChannelImage.value = null;
+
+    success.value = "Votre channel a été créé";
+  } catch (err) {
+    error.value = "Erreur lors de la création du channel";
+    errorDetails.value = err.message || "Erreur inconnue";
     console.error(err);
   } finally {
     loading.value = false;
@@ -77,7 +95,7 @@ async function handleCreateChannel() {
 }
 
 async function handleDeleteChannel(channelId) {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce channel ?')) {
+  if (!confirm("Êtes-vous sûr de vouloir supprimer ce channel ?")) {
     return;
   }
 
@@ -86,28 +104,30 @@ async function handleDeleteChannel(channelId) {
 
   try {
     deletingChannel.value = true;
-    error.value = '';
-    errorDetails.value = '';
+    error.value = "";
+    errorDetails.value = "";
 
     await deleteChannel(id);
 
-    channels.value = channels.value.filter(channel => channel.id !== id);
+    channels.value = channels.value.filter((channel) => channel.id !== id);
 
-    success.value = 'Vous avez supprimé(e) votre channel';
+    success.value = "Vous avez supprimé(e) votre channel";
   } catch (err) {
-    error.value = 'Erreur lors de la suppression du channel';
+    error.value = "Erreur lors de la suppression du channel";
 
     if (err.response) {
-      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(err.response.data || 'Pas de détails')}`;
-      console.error('Réponse du serveur:', err.response);
+      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(
+        err.response.data || "Pas de détails"
+      )}`;
+      console.error("Réponse du serveur:", err.response);
     } else if (err.request) {
-      errorDetails.value = 'Impossible de se connecter au serveur.';
-      console.error('Requête envoyée mais pas de réponse:', err.request);
+      errorDetails.value = "Impossible de se connecter au serveur.";
+      console.error("Requête envoyée mais pas de réponse:", err.request);
     } else {
-      errorDetails.value = err.message || 'Erreur inconnue';
+      errorDetails.value = err.message || "Erreur inconnue";
     }
 
-    console.error('Erreur détaillée:', err);
+    console.error("Erreur détaillée:", err);
   } finally {
     deletingChannel.value = false;
   }
@@ -116,14 +136,15 @@ async function handleDeleteChannel(channelId) {
 function openEditModal(channel) {
   editChannelId.value = channel.id;
   editChannelName.value = channel.name;
-  editChannelDescription.value = channel.description || '';
+  editChannelDescription.value = channel.description || "";
   editChannelImage.value = null;
-  editChannelImagePreview.value = channel.imageUrl || '';
+  editChannelImagePreview.value = channel.imageUrl || "";
   showEditModal.value = true;
 }
 
 function handleImageChange(event) {
   const file = event.target.files[0];
+  console.log(file);
   if (file) {
     editChannelImage.value = file;
 
@@ -135,61 +156,68 @@ function handleImageChange(event) {
 }
 
 function removeImage() {
-  if (editChannelImagePreview.value && !editChannelImagePreview.value.startsWith('http')) {
+  if (
+    editChannelImagePreview.value &&
+    !editChannelImagePreview.value.startsWith("http")
+  ) {
     URL.revokeObjectURL(editChannelImagePreview.value);
   }
 
   editChannelImage.value = null;
-  editChannelImagePreview.value = '';
+  editChannelImagePreview.value = "";
 }
 
 async function handleUpdateChannel() {
   if (!editChannelName.value.trim()) {
-    error.value = 'Le nom du channel est requis';
+    error.value = "Le nom du channel est requis";
     return;
   }
 
   try {
     editingChannel.value = true;
-    error.value = '';
-    errorDetails.value = '';
-    success.value = '';
+    error.value = "";
+    errorDetails.value = "";
+    success.value = "";
 
     const metadata = {
       name: editChannelName.value,
-      description: editChannelDescription.value
+      description: editChannelDescription.value,
     };
 
     if (editChannelImage.value) {
       metadata.image = editChannelImage.value;
-    }
-    else if (editChannelImagePreview.value === '' && channels.value.find(ch => ch.id === editChannelId.value)?.imageUrl) {
+    } else if (
+      editChannelImagePreview.value === "" &&
+      channels.value.find((ch) => ch.id === editChannelId.value)?.imageUrl
+    ) {
       metadata.image = null;
     }
 
     const updatedChannel = await updateChannelMetadata(editChannelId.value, metadata);
 
-    const index = channels.value.findIndex(ch => ch.id === editChannelId.value);
+    const index = channels.value.findIndex((ch) => ch.id === editChannelId.value);
     if (index !== -1) {
       channels.value[index] = { ...channels.value[index], ...updatedChannel };
     }
 
-    success.value = 'Channel mis à jour avec succès';
+    success.value = "Channel mis à jour avec succès";
     showEditModal.value = false;
   } catch (err) {
-    error.value = 'Erreur lors de la mise à jour du channel';
+    error.value = "Erreur lors de la mise à jour du channel";
 
     if (err.response) {
-      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(err.response.data || 'Pas de détails')}`;
-      console.error('Détails de la réponse:', err.response);
+      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(
+        err.response.data || "Pas de détails"
+      )}`;
+      console.error("Détails de la réponse:", err.response);
     } else if (err.request) {
-      errorDetails.value = 'Impossible de se connecter au serveur.';
-      console.error('Requête envoyée mais pas de réponse:', err.request);
+      errorDetails.value = "Impossible de se connecter au serveur.";
+      console.error("Requête envoyée mais pas de réponse:", err.request);
     } else {
-      errorDetails.value = err.message || 'Erreur inconnue';
+      errorDetails.value = err.message || "Erreur inconnue";
     }
 
-    console.error('Erreur lors de la mise à jour:', err);
+    console.error("Erreur lors de la mise à jour:", err);
   } finally {
     editingChannel.value = false;
   }
@@ -197,7 +225,10 @@ async function handleUpdateChannel() {
 
 function closeEditModal() {
   showEditModal.value = false;
-  if (editChannelImagePreview.value && !editChannelImagePreview.value.startsWith('http')) {
+  if (
+    editChannelImagePreview.value &&
+    !editChannelImagePreview.value.startsWith("http")
+  ) {
     URL.revokeObjectURL(editChannelImagePreview.value);
   }
 }
@@ -240,17 +271,30 @@ function closeEditModal() {
           ></textarea>
         </div>
 
-        <div class="form-group checkbox">
-          <input
-            id="isPrivate"
-            v-model="newChannel.isPrivate"
-            type="checkbox"
-          />
-          <label for="isPrivate">Channel privé</label>
+        <div class="form-group">
+          <label for="editChannelImage">Image du channel</label>
+          <div class="image-upload-container">
+            <div v-if="editChannelImagePreview" class="image-preview">
+              <img :src="editChannelImagePreview" alt="Prévisualisation" />
+              <button type="button" @click="removeImage" class="remove-image-button">
+                <span class="delete-icon">×</span> Supprimer l'image
+              </button>
+            </div>
+            <input
+              id="editChannelImage"
+              type="file"
+              accept="image/*"
+              @change="handleImageChange"
+              class="image-input"
+            />
+            <label for="editChannelImage" class="image-input-label">
+              {{ editChannelImagePreview ? "Changer l'image" : "Ajouter une image" }}
+            </label>
+          </div>
         </div>
 
         <button type="submit" :disabled="loading">
-          {{ loading ? 'Création en cours...' : 'Créer le channel' }}
+          {{ loading ? "Création en cours..." : "Créer le channel" }}
         </button>
       </form>
     </div>
@@ -266,10 +310,42 @@ function closeEditModal() {
       <div v-else-if="!channels.length" class="no-channels">
         <svg width="184" height="141" viewBox="0 0 184 141" class="empty-icon">
           <g>
-            <rect x="40" y="30" width="30" height="10" rx="3" fill="currentColor" opacity="0.4"></rect>
-            <rect x="40" y="50" width="60" height="10" rx="3" fill="currentColor" opacity="0.4"></rect>
-            <rect x="40" y="70" width="75" height="10" rx="3" fill="currentColor" opacity="0.4"></rect>
-            <rect x="40" y="90" width="50" height="10" rx="3" fill="currentColor" opacity="0.4"></rect>
+            <rect
+              x="40"
+              y="30"
+              width="30"
+              height="10"
+              rx="3"
+              fill="currentColor"
+              opacity="0.4"
+            ></rect>
+            <rect
+              x="40"
+              y="50"
+              width="60"
+              height="10"
+              rx="3"
+              fill="currentColor"
+              opacity="0.4"
+            ></rect>
+            <rect
+              x="40"
+              y="70"
+              width="75"
+              height="10"
+              rx="3"
+              fill="currentColor"
+              opacity="0.4"
+            ></rect>
+            <rect
+              x="40"
+              y="90"
+              width="50"
+              height="10"
+              rx="3"
+              fill="currentColor"
+              opacity="0.4"
+            ></rect>
           </g>
         </svg>
         <p>Aucun channel disponible. Créez-en un nouveau !</p>
@@ -278,33 +354,34 @@ function closeEditModal() {
       <ul v-else>
         <li v-for="channel in channels" :key="channel.id" class="channel-item">
           <div class="channel-header">
+            <div class="channel-image">
+              <img :src="channel.imageUrl || '/Konekt.png'" alt="Channel image" />
+            </div>
             <h3>
               <span class="channel-hash">#</span>
               {{ channel.name }}
             </h3>
             <div class="channel-actions">
-              <span class="channel-badge" :class="{ 'private': channel.isPrivate }">
-                {{ channel.isPrivate ? 'Privé' : 'Public' }}
-              </span>
               <button
                 @click="openEditModal(channel)"
                 class="edit-button"
-                :disabled="editingChannel">
+                :disabled="editingChannel"
+              >
                 <span class="edit-icon">✎</span>
               </button>
               <button
                 @click="handleDeleteChannel(channel.id)"
                 class="delete-button"
-                :disabled="deletingChannel">
+                :disabled="deletingChannel"
+              >
                 <span class="delete-icon">×</span>
               </button>
             </div>
           </div>
           <div class="channel-content">
-            <div v-if="channel.imageUrl" class="channel-image">
-              <img :src="channel.imageUrl" alt="Channel image" />
-            </div>
-            <p class="channel-description">{{ channel.description || 'Aucune description' }}</p>
+            <p class="channel-description">
+              {{ channel.description || "Aucune description" }}
+            </p>
           </div>
         </li>
       </ul>
@@ -362,15 +439,17 @@ function closeEditModal() {
                 class="image-input"
               />
               <label for="editChannelImage" class="image-input-label">
-                {{ editChannelImagePreview ? 'Changer l\'image' : 'Ajouter une image' }}
+                {{ editChannelImagePreview ? "Changer l'image" : "Modifier l'image" }}
               </label>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" @click="closeEditModal" class="cancel-button">Annuler</button>
+            <button type="button" @click="closeEditModal" class="cancel-button">
+              Annuler
+            </button>
             <button type="submit" :disabled="editingChannel" class="save-button">
-              {{ editingChannel ? 'Enregistrement...' : 'Enregistrer' }}
+              {{ editingChannel ? "Enregistrement..." : "Enregistrer" }}
             </button>
           </div>
         </form>
