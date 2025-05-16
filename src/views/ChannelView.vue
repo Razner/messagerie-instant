@@ -62,11 +62,14 @@ async function handleCreateChannel() {
       }
       formData.append("image", newChannelImage.value);
 
-      const response = await instance.post("/protected/channel", formData, {
+      const response = await fetch("/protected/channel", {
+        method: "POST",
+        body: formData,
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const imageUrl = response.data.imageUrl;
+      const data = await response.json();
+      const imageUrl = data.imageUrl;
 
       channels.value.push({ ...response.data, imageUrl });
     } else {
