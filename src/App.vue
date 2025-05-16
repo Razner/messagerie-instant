@@ -2,31 +2,19 @@
 </script>
 
 <template>
-    <div class="app">
-      <RouterView />
+  <header class="app-header">
+    <div class="logo">
+      <router-link to="/">
+        <img src="/Konekt.png" alt="Konekt Logo" class="logo-image" />
+      </router-link>
     </div>
-  </template>
+    <nav class="nav-links">
+      <router-link to="/">Accueil</router-link>
+      <router-link to="/channels">Channels</router-link>
+    </nav>
+  </header>
 
-  <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .app {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  </style>
-
+  <main>
+    <router-view />
+  </main>
+</template>

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from '../plugins/axios'
 
 export const useMessageStore = defineStore('message', {
   state: () => ({
@@ -15,25 +16,8 @@ export const useMessageStore = defineStore('message', {
       this.loading = true
       this.error = null
       try {
-        const response = await fetch(
-          `https://edu.tardigrade.land/msg/protected/channel/${channelId}/messages/${batchOffset}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          }
-        )
-
-        if (response.status === 401) {
-          throw new Error('Vous n\'avez pas la permission d\'accéder à ce canal')
-        }
-
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`)
-        }
-
-        const data = await response.json()
-        this.messages = data.sort((a, b) => a.timestamp - b.timestamp)
+        const response = await axios.get(`/channel/${channelId}/messages/${batchOffset}`)
+        this.messages = response.data.sort((a, b) => a.timestamp - b.timestamp)
         this.currentChannel = channelId
 
         // Initialiser la connexion WebSocket si ce n'est pas déjà fait
@@ -41,7 +25,7 @@ export const useMessageStore = defineStore('message', {
           this.initWebSocket(channelId)
         }
       } catch (error) {
-        this.error = error.message
+        this.error = error.response?.data?.message || 'Erreur lors de la récupération des messages'
         console.error('Erreur lors de la récupération des messages:', error)
       } finally {
         this.loading = false
@@ -106,34 +90,15 @@ export const useMessageStore = defineStore('message', {
       this.loading = true
       this.error = null
       try {
-        const response = await fetch(
-          `https://edu.tardigrade.land/msg/protected/channel/${this.currentChannel}/message`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({
-              content: {
-                type: 'Text',
-                value: content
-              }
-            })
+        await axios.post(`/channel/${this.currentChannel}/message`, {
+          content: {
+            type: 'Text',
+            value: content
           }
-        )
-
-        if (response.status === 401) {
-          throw new Error('Vous n\'avez pas la permission d\'envoyer des messages dans ce canal')
-        }
-
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`)
-        }
-
+        })
         // Le message sera ajouté via le WebSocket, pas besoin de rafraîchir
       } catch (error) {
-        this.error = error.message
+        this.error = error.response?.data?.message || 'Erreur lors de l\'envoi du message'
         console.error('Erreur lors de l\'envoi du message:', error)
         throw error
       } finally {
