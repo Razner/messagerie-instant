@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from '../plugins/axios'
+import axios from '@/plugins/axios'
 
 export const useMessageStore = defineStore('message', {
   state: () => ({
@@ -8,7 +8,8 @@ export const useMessageStore = defineStore('message', {
     loading: false,
     currentChannel: null,
     socket: null,
-    isConnected: false
+    isConnected: false,
+    batchOffset: 0
   }),
 
   actions: {
@@ -16,15 +17,26 @@ export const useMessageStore = defineStore('message', {
       this.loading = true
       this.error = null
       try {
-        const response = await axios.get(`/channel/${channelId}/messages/${batchOffset}`)
-        this.messages = response.data.sort((a, b) => a.timestamp - b.timestamp)
+        // S'assurer que channelId et batchOffset sont des nombres
+        const response = await axios.get(`/channel/${Number(channelId)}/messages/${Number(batchOffset)}`)
+        console.log('Réponse API:', response.data) // Pour debug
+        // Les messages sont déjà triés par timestamp dans la réponse de l'API
+        if (batchOffset === 0) {
+          // Si c'est le premier chargement, on remplace les messages
+          this.messages = response.data
+        } else {
+          // Sinon on ajoute les messages au début
+          this.messages = [...response.data, ...this.messages]
+        }
         this.currentChannel = channelId
+        this.batchOffset = batchOffset
 
         // Initialiser la connexion WebSocket si ce n'est pas déjà fait
         if (!this.socket) {
           this.initWebSocket(channelId)
         }
       } catch (error) {
+        console.error('Erreur complète:', error)
         this.error = error.response?.data?.message || 'Erreur lors de la récupération des messages'
         console.error('Erreur lors de la récupération des messages:', error)
       } finally {
@@ -38,18 +50,10 @@ export const useMessageStore = defineStore('message', {
         this.socket.close()
       }
 
-      // Créer une nouvelle connexion WebSocket
-      const wsUrl = `wss://edu.tardigrade.land/msg/protected/channel/${channelId}/ws`
+      const token = localStorage.getItem('token')
+      // Créer une nouvelle connexion WebSocket avec la bonne URL
+      const wsUrl = `wss://edu.tardigrade.land/msg/ws/channel/${channelId}/token/${token}`
       this.socket = new WebSocket(wsUrl)
-
-      // Ajouter le token d'authentification
-      this.socket.onopen = () => {
-        this.socket.send(JSON.stringify({
-          type: 'auth',
-          token: localStorage.getItem('token')
-        }))
-        this.isConnected = true
-      }
 
       // Gérer les messages entrants
       this.socket.onmessage = (event) => {
@@ -80,6 +84,11 @@ export const useMessageStore = defineStore('message', {
           }
         }, 5000)
       }
+
+      // La connexion est établie
+      this.socket.onopen = () => {
+        this.isConnected = true
+      }
     },
 
     async addMessage(content) {
@@ -103,6 +112,14 @@ export const useMessageStore = defineStore('message', {
         throw error
       } finally {
         this.loading = false
+      }
+    },
+
+    // Charger plus de messages (40 messages plus anciens)
+    async loadMoreMessages() {
+      if (this.currentChannel && !this.loading) {
+        const nextOffset = this.batchOffset + 40
+        await this.fetchMessages(this.currentChannel, nextOffset)
       }
     },
 
