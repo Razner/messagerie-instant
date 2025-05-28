@@ -1,6 +1,7 @@
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MessagerieView from '@/views/Messagerie.vue'
+import ChannelView from '@/views/ChannelView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -23,6 +24,14 @@ const router = createRouter({
       path: '/message',
       name: 'message',
       component: MessagerieView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/channels',
+      name: 'channels',
+      component: ChannelView,
       meta: {
         requiresAuth: true
       }

@@ -1,0 +1,620 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark: #36393f;
+  --bg-darker: #2f3136;
+  --bg-darkest: #202225;
+  --text-light: #dcddde;
+  --text-lighter: #ffffff;
+  --primary: #5865F2;
+  --primary-hover: #4752c4;
+  --success: #3ba55c;
+  --success-hover: #359253;
+  --error: #ed4245;
+  --error-hover: #c03537;
+  --text-muted: #8e9297;
+  --bg-highlight: #4f545c;
+  --sidebar: #2f3136;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-light);
+  background-color: var(--bg-dark);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--bg-darkest);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.logo a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 75px;
+  width: auto;
+  margin-right: 5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.nav-links a:hover {
+  background-color: var(--bg-highlight);
+  color: var(--text-lighter);
+}
+
+.nav-links a.router-link-active {
+  color: var(--text-lighter);
+  background-color: var(--primary);
+}
+
+main {
+  padding-top: 20px;
+}
+
+.home {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.home h1 {
+  font-size: 2.2em;
+  color: var(--text-lighter);
+  margin-bottom: 40px;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.feature-card {
+  background-color: var(--bg-darker);
+  border-radius: 8px;
+  padding: 30px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.feature-card h2 {
+  font-size: 1.5em;
+  color: var(--text-lighter);
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: var(--text-muted);
+  margin-bottom: 25px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Page des channels */
+.channel-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.channel-page h1 {
+  font-size: 2em;
+  color: var(--text-lighter);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.channel-page h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: var(--text-lighter);
+}
+
+.channel-form, .channels-list {
+  background-color: var(--bg-darker);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.hashtag {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: var(--text-muted);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.input-with-icon input {
+  padding-left: 30px !important;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--bg-darkest);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--bg-darkest);
+  color: var(--text-light);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: var(--bg-darkest);
+  border: 2px solid var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: white;
+  position: absolute;
+  font-size: 14px;
+  top: 0;
+  left: 4px;
+}
+
+.checkbox label {
+  margin-left: 10px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+button:disabled {
+  background-color: var(--bg-highlight);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: rgba(237, 66, 69, 0.1);
+  color: var(--error);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--error);
+}
+
+.error-details {
+  font-size: 0.85em;
+  margin-top: 5px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.success-message {
+  background-color: rgba(59, 165, 92, 0.1);
+  color: var(--success);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--success);
+}
+
+.channel-item {
+  list-style: none;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background-color: var(--bg-darkest);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.channel-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: var(--bg-highlight);
+}
+
+.channel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.channel-hash {
+  color: var(--text-muted);
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.channel-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--text-lighter);
+  display: flex;
+  align-items: center;
+}
+
+.channel-badge {
+  font-size: 0.8em;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background-color: var(--success);
+  color: white;
+}
+
+.channel-badge.private {
+  background-color: var(--primary);
+}
+
+.channel-description {
+  color: var(--text-muted);
+  margin: 5px 0 0;
+  font-size: 0.9em;
+}
+
+.loading, .no-channels {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+}
+
+.discord-loader {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  border: 3px solid var(--bg-highlight);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s linear infinite;
+}
+
+.empty-icon {
+  margin-bottom: 15px;
+  color: var(--text-muted);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.channel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-button {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: 4px;
+  padding: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-button:hover {
+  background-color: var(--error);
+  color: white;
+}
+
+.delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-icon {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Styles pour la liste des channels */
+.channel-content {
+  padding: 15px;
+  color: var(--text-light);
+}
+
+.channel-image {
+  margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 300px;
+}
+
+.channel-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.channel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-button, .edit-button {
+  background-color: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-left: 5px;
+  padding: 0;
+  color: var(--text-muted);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: var(--error);
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.delete-icon, .edit-icon {
+  font-size: 18px;
+}
+
+/* Styles pour le modal d'édition */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--bg-dark);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--bg-darker);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--text-lighter);
+  font-size: 18px;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  color: var(--text-light);
+}
+
+.edit-form {
+  padding: 20px;
+}
+
+.image-upload-container {
+  margin-top: 10px;
+}
+
+.image-preview {
+  margin-bottom: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 200px;
+  position: relative;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s;
+}
+
+.remove-image-button:hover {
+  background-color: var(--error);
+}
+
+.image-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.image-input-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: var(--bg-highlight);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.image-input-label:hover {
+  background-color: var(--primary);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  gap: 10px;
+}
+
+.cancel-button {
+  background-color: var(--bg-highlight);
+}
+
+.cancel-button:hover {
+  background-color: var(--text-muted);
+}
+
+.save-button {
+  background-color: var(--primary);
+}
+
+.save-button:hover {
+  background-color: var(--primary-hover);
+}

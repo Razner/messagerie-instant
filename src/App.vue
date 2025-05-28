@@ -6,7 +6,7 @@ import { RouterView } from 'vue-router';
   <header class="app-header">
     <div class="logo">
       <router-link to="/">
-        <!-- <img src="/Konekt.png" alt="Konekt Logo" class="logo-image" /> -->
+        <img src="/Konekt.png" alt="Konekt Logo" class="logo-image" />
       </router-link>
     </div>
     <nav class="nav-links">
