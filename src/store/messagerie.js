@@ -17,17 +17,26 @@ export const useMessageStore = defineStore('message', {
       this.loading = true
       this.error = null
       try {
-        // S'assurer que channelId et batchOffset sont des nombres
-        const response = await axios.get(`/channel/${Number(channelId)}/messages/${Number(batchOffset)}`)
-        console.log('Réponse API:', response.data) // Pour debug
-        // Les messages sont déjà triés par timestamp dans la réponse de l'API
+        console.log('Récupération des messages pour le channel:', channelId)
+        console.log('Type de channelId:', typeof channelId)
+        console.log('Offset:', batchOffset)
+
+        // Calculer le nombre de messages à récupérer
+        const messageCount = 40
+        const url = `/channel/${channelId}/messages/${messageCount}`
+        console.log('URL de la requête:', url)
+
+        const response = await axios.get(url)
+        console.log('Messages reçus:', response.data)
+
         if (batchOffset === 0) {
           // Si c'est le premier chargement, on remplace les messages
           this.messages = response.data
         } else {
-          // Sinon on ajoute les messages au début
+          // Sinon on ajoute les messages au début (pour le chargement des messages plus anciens)
           this.messages = [...response.data, ...this.messages]
         }
+
         this.currentChannel = channelId
         this.batchOffset = batchOffset
 
@@ -36,9 +45,9 @@ export const useMessageStore = defineStore('message', {
           this.initWebSocket(channelId)
         }
       } catch (error) {
-        console.error('Erreur complète:', error)
-        this.error = error.response?.data?.message || 'Erreur lors de la récupération des messages'
         console.error('Erreur lors de la récupération des messages:', error)
+        this.error = error.response?.data || 'Erreur lors de la récupération des messages'
+        throw error
       } finally {
         this.loading = false
       }

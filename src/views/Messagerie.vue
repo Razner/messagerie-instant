@@ -18,7 +18,7 @@
           </div>
           <div class="conversation-info">
             <div class="conversation-name">{{ channel.name }}</div>
-            <div class="conversation-last-message">{{ channel.lastMessage }}</div>
+            <div class="conversation-last-message">{{ channel.description || 'Aucun message' }}</div>
           </div>
         </div>
       </div>
@@ -46,6 +46,15 @@
             {{ messageStore.error }}
           </div>
           <template v-else>
+            <div class="load-more-container" v-if="messageStore.messages.length > 0">
+              <button
+                @click="messageStore.loadMoreMessages"
+                :disabled="messageStore.loading"
+                class="load-more-button"
+              >
+                Charger plus de messages
+              </button>
+            </div>
             <MessageBubble
               v-for="(msg, index) in messageStore.messages"
               :key="index"
@@ -69,24 +78,34 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, nextTick } from 'vue'
+import { ref, onUnmounted, nextTick, onMounted } from 'vue'
 import { useMessageStore } from '../store/messagerie.js'
 import MessageForm from '../components/Message/MessageForm.vue'
 import MessageBubble from '../components/Message/MessageBubble.vue'
+import { getChannels } from '../stores/channels.js'
 
 const messageStore = useMessageStore()
 const messagesContainer = ref(null)
 const currentChannel = ref(null)
+const channels = ref([])
 
-// Liste des canaux disponibles (à remplacer par un appel API)
-const channels = ref([
-  { id: 1, name: 'Général', lastMessage: 'Bienvenue dans le canal général' },
-  { id: 2, name: 'Support', lastMessage: 'Comment puis-je vous aider ?' },
-  { id: 3, name: 'Développement', lastMessage: 'Nouvelle fonctionnalité disponible' }
-])
+// Charger la liste des canaux au montage du composant
+onMounted(async () => {
+  try {
+    const channelsList = await getChannels()
+    channels.value = channelsList
+    // Sélectionner le premier canal si disponible
+    if (channels.value.length > 0) {
+      selectChannel(channels.value[0].id)
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des canaux:', error)
+  }
+})
 
 // Sélectionner un canal
 function selectChannel(channelId) {
+  console.log('Channel sélectionné avec ID:', channelId)
   currentChannel.value = channelId
   messageStore.fetchMessages(channelId)
 }
@@ -263,5 +282,29 @@ onUnmounted(() => {
   height: 100%;
   color: #666;
   font-size: 1.2rem;
+}
+
+.load-more-container {
+  text-align: center;
+  padding: 1rem;
+}
+
+.load-more-button {
+  background-color: #f0f2f5;
+  color: #1a1a1a;
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.load-more-button:hover {
+  background-color: #e4e6e9;
+}
+
+.load-more-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
