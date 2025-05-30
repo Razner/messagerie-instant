@@ -17,7 +17,7 @@ const password = ref('');
 
 </template>
 
-<style>
+<style scoped>
   .input {
     padding: 1%;
     width: 75%;
@@ -52,4 +52,11 @@ const password = ref('');
     background-color: white;
     color: #4CAF50;
   }
+
+  @media (max-width: 1024px) {
+  .form {
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>
