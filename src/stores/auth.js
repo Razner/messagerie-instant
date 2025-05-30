@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 
 export const LoginStore = defineStore("LoginStore", () => {
   const saveTokenToLocalStorage = (token) => {
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
   };
 
   const Login = async (username, password) => {
