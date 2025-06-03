@@ -78,12 +78,11 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, nextTick, onMounted } from 'vue'
+import { ref, onUnmounted, nextTick, onMounted, watch } from 'vue'
 import { useMessageStore } from '../stores/messagerie.js'
 import MessageForm from '../components/Message/MessageForm.vue'
 import MessageBubble from '../components/Message/MessageBubble.vue'
 import { getChannels } from '../stores/channels.js'
-import { watch } from 'vue'
 
 const messageStore = useMessageStore()
 const messagesContainer = ref(null)
@@ -94,11 +93,18 @@ watch(
   () => messageStore.messages.length,
   async () => {
     await nextTick()
-    if (messagesContainer.value) {
-      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
-    }
+      if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+      }
   }
 )
+
+onMounted(async () => {
+    await nextTick()
+      if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+      }
+  })
 
 // Charger la liste des canaux au montage du composant
 onMounted(async () => {
@@ -115,7 +121,7 @@ onMounted(async () => {
 })
 
 // Sélectionner un canal
-function selectChannel(channelId) {
+async function selectChannel(channelId) {
   currentChannel.value = channelId
   messageStore.fetchMessages(channelId)
 
@@ -131,11 +137,10 @@ function getCurrentChannelName() {
 async function addMessage(content) {
   try {
     await messageStore.addMessage(content)
-    // Faire défiler vers le bas après l'envoi d'un message
     await nextTick()
-    if (messagesContainer.value) {
-      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
-    }
+      if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+      }
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error)
   }
