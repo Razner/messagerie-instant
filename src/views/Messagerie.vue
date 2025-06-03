@@ -79,7 +79,7 @@
 
 <script setup>
 import { ref, onUnmounted, nextTick, onMounted } from 'vue'
-import { useMessageStore } from '../store/messagerie.js'
+import { useMessageStore } from '../stores/messagerie.js'
 import MessageForm from '../components/Message/MessageForm.vue'
 import MessageBubble from '../components/Message/MessageBubble.vue'
 import { getChannels } from '../stores/channels.js'
