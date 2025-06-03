@@ -58,6 +58,7 @@
               v-for="(msg, index) in messageStore.messages"
               :key="index"
               :author="msg.author"
+              :timestamp="msg.timestamp"
               :content="msg.content"
             />
           </template>
