@@ -38,6 +38,7 @@ export const ProfilStore = defineStore("ProfilStore", () => {
     })
       .then((response) => {
         if (response.status === 200) {
+          location.reload();
           return response.json();
         } else {
           throw new Error("Invalid credentials");
