@@ -1,5 +1,5 @@
 <template>
-  <div :class="['message-bubble', author === 'Moi' ? 'my-message' : 'other-message']">
+  <div :class="['message-bubble', author === user ? 'my-message' : 'other-message']">
     <div class="message-content">
       <template v-if="content.type === 'Text'">
         {{ content.value }}
@@ -19,6 +19,10 @@
 </template>
 
 <script setup>
+
+import { ProfilStore } from '@/stores/profil'
+
+const user = ProfilStore().user
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
@@ -44,13 +48,13 @@ const props = defineProps({
 
 function formatTime(timestamp) {
   const date = new Date(timestamp * 1000) // Convertir le timestamp Unix en millisecondes
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  return date.toUTCString([])
 }
 </script>
 
 <style scoped>
 .message-bubble {
-  max-width: 70%;
+  max-width: 100%;
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
@@ -58,6 +62,7 @@ function formatTime(timestamp) {
 
 .my-message {
   align-self: flex-end;
+  align-items: flex-end;
 }
 
 .other-message {
@@ -70,15 +75,16 @@ function formatTime(timestamp) {
   font-size: 1rem;
   line-height: 1.4;
   word-wrap: break-word;
+  width: fit-content;
 }
 
 .my-message .message-content {
-  background-color: #dcf8c6;
+  background-color: #705aff;
   border-top-right-radius: 0;
 }
 
 .other-message .message-content {
-  background-color: white;
+  background-color: rgb(86, 86, 86);
   border-top-left-radius: 0;
 }
 
