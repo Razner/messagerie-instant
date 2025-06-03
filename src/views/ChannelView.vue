@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import {
+  instance,
   createChannel,
   getChannels,
   deleteChannel,
