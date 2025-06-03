@@ -6,6 +6,9 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+// Supprimer le token au démarrage
+localStorage.removeItem('token')
+
 const app = createApp(App)
 
 app.use(createPinia())
