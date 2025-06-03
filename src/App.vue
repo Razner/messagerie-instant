@@ -3,16 +3,19 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-    <RouterView />
-</template>
+  <header class="app-header">
+    <div class="logo">
+      <router-link to="/">
+        <img src="/Konekt.png" alt="Konekt Logo" class="logo-image" />
+      </router-link>
+    </div>
+    <nav class="nav-links">
+      <router-link to="/">Accueil</router-link>
+      <router-link to="/channels">Channels</router-link>
+    </nav>
+  </header>
 
-<style>
-  #app{
-    display: flex;
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100vw;
-  }
-</style>
+  <main>
+    <router-view />
+  </main>
+</template>

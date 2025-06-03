@@ -1,6 +1,8 @@
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProfilView from '@/views/ProfilView.vue'
+import MessagerieView from '@/views/Messagerie.vue'
+import ChannelView from '@/views/ChannelView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -9,7 +11,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
@@ -20,8 +25,23 @@ const router = createRouter({
       path: '/profil',
       name: 'profil',
       component: ProfilView
+    },
+    {
+      path: '/message',
+      name: 'message',
+      component: MessagerieView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/channels',
+      name: 'channels',
+      component: ChannelView,
+      meta: {
+        requiresAuth: true
+      }
     }
-
   ],
 })
 
