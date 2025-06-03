@@ -1,6 +1,12 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
-const instance = axios.create({
+const decodedToken = () => {
+  const token = sessionStorage.getItem("token");
+  return jwtDecode(token).sub;
+}
+
+export const instance = axios.create({
   baseURL: 'https://edu.tardigrade.land/msg/protected',
   timeout: 10000,
   headers: {
@@ -26,10 +32,20 @@ export async function createChannel(channelData) {
   }
 }
 
-export async function getChannels() {
+export async function getChannels(all = false) {
+  var sortedChannels = [];
   try {
     const response = await instance.get('/user/channels');
-    return response.data;
+    const user = decodedToken();
+    for(const channel of response.data) {
+      if (channel.creator == user) {
+        sortedChannels.push(channel);
+      }
+    }
+    if (all){
+      return response.data;
+    }
+    return sortedChannels;
   } catch (error) {
     console.error('Erreur lors de la récupération des channels:', error);
     if (error.response) {
