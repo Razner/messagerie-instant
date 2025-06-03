@@ -22,8 +22,7 @@ export const useMessageStore = defineStore('message', {
         console.log('Offset:', batchOffset)
 
         // Calculer le nombre de messages à récupérer
-        const messageCount = 40
-        const url = `/channel/${channelId}/messages/${messageCount}`
+        const url = `/channel/${channelId}/messages/${batchOffset}`
         console.log('URL de la requête:', url)
 
         const response = await axios.get(url)
@@ -39,11 +38,7 @@ export const useMessageStore = defineStore('message', {
 
         this.currentChannel = channelId
         this.batchOffset = batchOffset
-
-        // Initialiser la connexion WebSocket si ce n'est pas déjà fait
-        if (!this.socket) {
-          this.initWebSocket(channelId)
-        }
+        this.initWebSocket(channelId)
       } catch (error) {
         console.error('Erreur lors de la récupération des messages:', error)
         this.error = error.response?.data || 'Erreur lors de la récupération des messages'
@@ -58,11 +53,16 @@ export const useMessageStore = defineStore('message', {
       if (this.socket) {
         this.socket.close()
       }
+      console.log('Initialisation de la connexion WebSocket pour le channel:', channelId)
 
       const token = sessionStorage.getItem('token')
       // Créer une nouvelle connexion WebSocket avec la bonne URL
       const wsUrl = `https://edu.tardigrade.land/msg/ws/channel/${channelId}/token/${token}`
       this.socket = new WebSocket(wsUrl)
+
+      this.socket.addEventListener('message', (e) => {
+        this.messages.push(JSON.parse(e.data))
+      })
 
       // Gérer les messages entrants
       this.socket.onmessage = (event) => {
