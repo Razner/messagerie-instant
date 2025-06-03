@@ -5,6 +5,8 @@ import {
   getChannels,
   deleteChannel,
   updateChannelMetadata,
+  addUserToChannel,
+  banUserFromChannel,
 } from "../stores/channels";
 
 const newChannelImage = ref(null);
@@ -94,7 +96,6 @@ async function handleDeleteChannel(channelId) {
   }
 
   const id = parseInt(channelId, 10);
-  console.log(`Suppression du channel avec l'ID: ${id} (type: ${typeof id})`);
 
   try {
     deletingChannel.value = true;
@@ -137,7 +138,6 @@ function openEditModal(channel) {
 
 function handleImageChange(event) {
   const file = event.target.files[0];
-  console.log(file);
   if (file) {
     editChannelImage.value = file;
 
@@ -212,6 +212,74 @@ async function handleUpdateChannel() {
     console.error("Erreur lors de la mise à jour:", err);
   } finally {
     editingChannel.value = false;
+  }
+}
+
+async function handleAddUserToChannel(channelId) {
+  const username = prompt("Entrez le nom d'utilisateur à ajouter :");
+  if (!username) {
+    alert("Le nom d'utilisateur est requis.");
+    return;
+  }
+
+  try {
+    loading.value = true;
+    error.value = "";
+    errorDetails.value = "";
+
+    await addUserToChannel(channelId, username);
+
+    success.value = `L'utilisateur ${username} a été ajouté au channel avec succès.`;
+  } catch (err) {
+    error.value = "Erreur lors de l'ajout de l'utilisateur au channel.";
+    if (err.response) {
+      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(
+        err.response.data || "Pas de détails"
+      )}`;
+      console.error("Réponse du serveur:", err.response);
+    } else if (err.request) {
+      errorDetails.value = "Impossible de se connecter au serveur.";
+      console.error("Requête envoyée mais pas de réponse:", err.request);
+    } else {
+      errorDetails.value = err.message || "Erreur inconnue";
+    }
+    console.error("Erreur détaillée:", err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleBanUserFromChannel(channelId) {
+  const username = prompt("Entrez le nom d'utilisateur à bannir :");
+  if (!username) {
+    alert("Le nom d'utilisateur est requis.");
+    return;
+  }
+
+  try {
+    loading.value = true;
+    error.value = "";
+    errorDetails.value = "";
+
+    await banUserFromChannel(channelId, username);
+
+    success.value = `L'utilisateur ${username} a été banni du channel avec succès.`;
+  } catch (err) {
+    error.value = "Erreur lors du bannissement de l'utilisateur du channel.";
+    if (err.response) {
+      errorDetails.value = `Statut: ${err.response.status}, Message: ${JSON.stringify(
+        err.response.data || "Pas de détails"
+      )}`;
+      console.error("Réponse du serveur:", err.response);
+    } else if (err.request) {
+      errorDetails.value = "Impossible de se connecter au serveur.";
+      console.error("Requête envoyée mais pas de réponse:", err.request);
+    } else {
+      errorDetails.value = err.message || "Erreur inconnue";
+    }
+    console.error("Erreur détaillée:", err);
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -358,6 +426,21 @@ function closeEditModal() {
                 :disabled="deletingChannel"
               >
                 <span class="delete-icon">×</span>
+              </button>
+              <button
+                @click="handleAddUserToChannel(channel.id)"
+                class="add-user-button"
+                :disabled="loading"
+              >
+                Ajouter un utilisateur
+              </button>
+              <!-- Nouveau bouton pour bannir un utilisateur -->
+              <button
+                @click="handleBanUserFromChannel(channel.id)"
+                class="ban-user-button"
+                :disabled="loading"
+              >
+                Bannir un utilisateur
               </button>
             </div>
           </div>

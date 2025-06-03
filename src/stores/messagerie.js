@@ -23,7 +23,7 @@ export const useMessageStore = defineStore('message', {
 
         // Calculer le nombre de messages à récupérer
         const messageCount = 40
-        const url = `/channel/${channelId}/messages/${messageCount}`
+        const url = `/channel/${channelId}/messages/0`
         console.log('URL de la requête:', url)
 
         const response = await axios.get(url)
