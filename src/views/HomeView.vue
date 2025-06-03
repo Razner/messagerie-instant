@@ -1,10 +1,5 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import { computed } from 'vue';
-
-const isAuthenticated = computed(() => {
-  return !!localStorage.getItem('token');
-});
 </script>
 
 <template>
@@ -40,11 +35,18 @@ const isAuthenticated = computed(() => {
 }
 
 .feature-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: white;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 300px;
+}
+.feature-card h2 {
+  height: 50%;
+  color: #333;
 }
 
 .btn {
