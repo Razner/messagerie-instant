@@ -17,16 +17,11 @@ export const useMessageStore = defineStore('message', {
       this.loading = true
       this.error = null
       try {
-        console.log('Récupération des messages pour le channel:', channelId)
-        console.log('Type de channelId:', typeof channelId)
-        console.log('Offset:', batchOffset)
 
         // Calculer le nombre de messages à récupérer
         const url = `/channel/${channelId}/messages/${batchOffset}`
-        console.log('URL de la requête:', url)
 
         const response = await axios.get(url)
-        console.log('Messages reçus:', response.data)
 
         if (batchOffset === 0) {
           // Si c'est le premier chargement, on remplace les messages
@@ -53,7 +48,6 @@ export const useMessageStore = defineStore('message', {
       if (this.socket) {
         this.socket.close()
       }
-      console.log('Initialisation de la connexion WebSocket pour le channel:', channelId)
 
       const token = sessionStorage.getItem('token')
       // Créer une nouvelle connexion WebSocket avec la bonne URL
@@ -83,16 +77,6 @@ export const useMessageStore = defineStore('message', {
         this.error = 'Erreur de connexion en temps réel'
       }
 
-      // Gérer la fermeture
-      this.socket.onclose = () => {
-        this.isConnected = false
-        // Tentative de reconnexion après 5 secondes
-        setTimeout(() => {
-          if (this.currentChannel) {
-            this.initWebSocket(this.currentChannel)
-          }
-        }, 5000)
-      }
 
       // La connexion est établie
       this.socket.onopen = () => {

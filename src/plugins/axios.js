@@ -16,10 +16,6 @@ axiosInstance.interceptors.request.use(
     if (token) {
       // Format exact spécifié dans la doc: "Authorization: Bearer <JWT Token>"
       config.headers.Authorization = `Bearer ${token}`
-      console.log('URL de la requête:', config.url)
-      console.log('Méthode:', config.method)
-      console.log('Token envoyé:', token)
-      console.log('Headers complets:', JSON.stringify(config.headers, null, 2))
     } else {
       console.warn('Pas de token trouvé dans le localStorage')
     }
