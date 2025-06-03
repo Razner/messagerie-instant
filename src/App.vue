@@ -12,6 +12,7 @@ import { RouterView } from 'vue-router';
     <nav class="nav-links">
       <router-link to="/">Accueil</router-link>
       <router-link to="/channels">Channels</router-link>
+      <router-link to="/profil">Profil</router-link>
     </nav>
   </header>
 
