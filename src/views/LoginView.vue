@@ -31,7 +31,7 @@ import LoginForm from '@/components/LoginForm.vue';
 }
 
 @media (max-width: 1024px) {
-  #app {
+  .loginPage {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
