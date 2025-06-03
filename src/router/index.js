@@ -1,5 +1,6 @@
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import ProfilView from '@/views/ProfilView.vue'
 import MessagerieView from '@/views/Messagerie.vue'
 import ChannelView from '@/views/ChannelView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -21,6 +22,11 @@ const router = createRouter({
       component: LoginView
     },
     {
+      path: '/profil',
+      name: 'profil',
+      component: ProfilView
+    },
+    {
       path: '/message',
       name: 'message',
       component: MessagerieView,
@@ -39,30 +45,12 @@ const router = createRouter({
   ],
 })
 
-// Navigation guard pour vérifier l'authentification
-router.beforeEach((to, from, next) => {
-  // Si la route n'est pas la page de connexion
-  if (to.path !== '/login') {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      // Rediriger vers la page de connexion si non authentifié
-      next({
-        path: '/login',
-        query: { redirect: to.fullPath }
-      })
-    } else {
-      next()
-    }
-  } else {
-    // Si on est sur la page de connexion et qu'on a déjà un token
-    const token = localStorage.getItem('token')
-    if (token) {
-      // Rediriger vers la page d'accueil
-      next({ path: '/' })
-    } else {
-      next()
-    }
+router.beforeEach((to) => {
+  const token = sessionStorage.getItem("token");
+  if (to.name !== 'login' && !token) {
+    return { name: 'login' }
   }
+  return true
 })
 
 export default router
