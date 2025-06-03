@@ -1,8 +1,20 @@
 <script setup>
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
-</template>
+  <header class="app-header">
+    <div class="logo">
+      <router-link to="/">
+        <img src="/Konekt.png" alt="Konekt Logo" class="logo-image" />
+      </router-link>
+    </div>
+    <nav class="nav-links">
+      <router-link to="/">Accueil</router-link>
+      <router-link to="/channels">Channels</router-link>
+      <router-link to="/profil">Profil</router-link>
+    </nav>
+  </header>
 
-<style scoped>
-</style>
+  <RouterView/>
+</template>

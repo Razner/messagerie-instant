@@ -1,1 +1,0 @@
-//fichier API pour les channels
