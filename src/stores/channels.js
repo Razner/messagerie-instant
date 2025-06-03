@@ -1,19 +1,32 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const decodedToken = () => {
-  const token = sessionStorage.getItem("token");
-  return jwtDecode(token).sub;
-}
 
 export const instance = axios.create({
   baseURL: 'https://edu.tardigrade.land/msg/protected',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${sessionStorage.getItem('token')}`
   }
 });
+
+const decodedToken = () => {
+  const token = sessionStorage.getItem("token");
+  return jwtDecode(token).sub;
+}
+
+instance.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export async function createChannel(channelData) {
   try {
