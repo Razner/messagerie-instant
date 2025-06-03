@@ -37,7 +37,7 @@
         </div>
 
         <!-- Messages -->
-        <div class="messages" ref="messagesContainer">
+        <div class="messages" ref="messagesContainer" id="message-list">
           <div v-if="messageStore.loading" class="loading-messages">
             Chargement des messages...
           </div>
@@ -83,16 +83,27 @@ import { useMessageStore } from '../stores/messagerie.js'
 import MessageForm from '../components/Message/MessageForm.vue'
 import MessageBubble from '../components/Message/MessageBubble.vue'
 import { getChannels } from '../stores/channels.js'
+import { watch } from 'vue'
 
 const messageStore = useMessageStore()
 const messagesContainer = ref(null)
 const currentChannel = ref(null)
 const channels = ref([])
 
+watch(
+  () => messageStore.messages.length,
+  async () => {
+    await nextTick()
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+    }
+  }
+)
+
 // Charger la liste des canaux au montage du composant
 onMounted(async () => {
   try {
-    const channelsList = await getChannels()
+    const channelsList = await getChannels(true)
     channels.value = channelsList
     // Sélectionner le premier canal si disponible
     if (channels.value.length > 0) {
@@ -105,9 +116,9 @@ onMounted(async () => {
 
 // Sélectionner un canal
 function selectChannel(channelId) {
-  console.log('Channel sélectionné avec ID:', channelId)
   currentChannel.value = channelId
   messageStore.fetchMessages(channelId)
+
 }
 
 // Obtenir le nom du canal actuel
@@ -257,10 +268,10 @@ onUnmounted(() => {
 
 .messages {
   display: flex;
-  width: 90%;
+  height: 100vh;
   overflow-y: auto;
   padding: 1rem;
-  display: flex;
+  padding-bottom: 2rem;
   flex-direction: column;
   gap: 1rem;
 }
