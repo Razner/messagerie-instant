@@ -59,9 +59,9 @@ export const useMessageStore = defineStore('message', {
         this.socket.close()
       }
 
-      const token = localStorage.getItem('token')
+      const token = sessionStorage.getItem('token')
       // Créer une nouvelle connexion WebSocket avec la bonne URL
-      const wsUrl = `wss://edu.tardigrade.land/msg/ws/channel/${channelId}/token/${token}`
+      const wsUrl = `https://edu.tardigrade.land/msg/ws/channel/${channelId}/token/${token}`
       this.socket = new WebSocket(wsUrl)
 
       // Gérer les messages entrants

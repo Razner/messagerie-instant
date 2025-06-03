@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // Intercepteur pour ajouter le token d'authentification à chaque requête
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
     if (token) {
       // Format exact spécifié dans la doc: "Authorization: Bearer <JWT Token>"
       config.headers.Authorization = `Bearer ${token}`
