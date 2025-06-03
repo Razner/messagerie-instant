@@ -33,7 +33,7 @@ export const LoginStore = defineStore("LoginStore", () => {
         }
       }).then((data) => {
         saveTokenToLocalStorage(data.token)
-        router.push('/message')
+        router.push('/')
       })
       .catch((error) => {
         console.error("Erreur de connexion:", error)
