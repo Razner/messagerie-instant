@@ -109,10 +109,8 @@ export const useMessageStore = defineStore('message', {
       this.error = null
       try {
         await axios.post(`/channel/${this.currentChannel}/message`, {
-          content: {
-            type: 'Text',
-            value: content
-          }
+          type: 'Text',
+          value: content
         })
         // Le message sera ajouté via le WebSocket, pas besoin de rafraîchir
       } catch (error) {

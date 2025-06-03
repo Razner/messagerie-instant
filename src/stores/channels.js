@@ -1,16 +1,17 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: '',
+  baseURL: 'https://edu.tardigrade.land/msg/protected',
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${sessionStorage.getItem('token')}`
   }
 });
 
 export async function createChannel(channelData) {
   try {
-    const response = await instance.post('/protected/channel', channelData);
+    const response = await instance.post('/channel', channelData);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la création du channel:', error);
@@ -26,7 +27,7 @@ export async function createChannel(channelData) {
 
 export async function getChannels() {
   try {
-    const response = await instance.get('/protected/channels');
+    const response = await instance.get('/user/channels');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des channels:', error);
@@ -39,7 +40,7 @@ export async function getChannels() {
 
 export async function getChannelById(channelId) {
   try {
-    const response = await instance.get(`/protected/channel/${channelId}`);
+    const response = await instance.get(`/channel/${channelId}`);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors de la récupération du channel ${channelId}:`, error);
@@ -49,7 +50,7 @@ export async function getChannelById(channelId) {
 
 export async function deleteChannel(channelId) {
   const id = parseInt(channelId, 10);
-  const url = `/protected/channel/${id}`;
+  const url = `/channel/${id}`;
 
   console.log(`Tentative de suppression du channel ID: ${id}`);
   console.log(`URL de la requête DELETE: ${url}`);
@@ -75,7 +76,7 @@ export async function deleteChannel(channelId) {
 
 export async function updateChannelMetadata(channelId, metadata) {
   const id = parseInt(channelId, 10);
-  const url = `/protected/channel/${id}/update_metadata`;
+  const url = `/channel/${id}/update_metadata`;
 
   console.log(`Tentative de mise à jour du channel ID: ${id}`);
   console.log(`URL de la requête PUT: ${url}`, metadata);

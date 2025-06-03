@@ -256,7 +256,8 @@ onUnmounted(() => {
 }
 
 .messages {
-  flex: 1;
+  display: flex;
+  width: 90%;
   overflow-y: auto;
   padding: 1rem;
   display: flex;
