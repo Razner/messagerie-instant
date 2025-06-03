@@ -11,7 +11,6 @@ const newChannelImage = ref(null);
 const channels = ref([]);
 const newChannel = ref({
   name: "",
-  description: "",
 });
 const loading = ref(false);
 const error = ref("");
@@ -21,7 +20,6 @@ const deletingChannel = ref(false);
 const editingChannel = ref(false);
 const editChannelId = ref(null);
 const editChannelName = ref("");
-const editChannelDescription = ref("");
 const editChannelImage = ref(null);
 const editChannelImagePreview = ref("");
 const showEditModal = ref(false);
@@ -57,9 +55,6 @@ async function handleCreateChannel() {
     if (newChannelImage.value && newChannelImage.value instanceof File) {
       const formData = new FormData();
       formData.append("name", newChannel.value.name);
-      if (newChannel.value.description) {
-        formData.append("description", newChannel.value.description);
-      }
       formData.append("image", newChannelImage.value);
 
       const response = await instance.post("/protected/channel", formData, {
@@ -80,7 +75,6 @@ async function handleCreateChannel() {
 
     newChannel.value = {
       name: "",
-      description: "",
     };
     newChannelImage.value = null;
 
@@ -136,7 +130,6 @@ async function handleDeleteChannel(channelId) {
 function openEditModal(channel) {
   editChannelId.value = channel.id;
   editChannelName.value = channel.name;
-  editChannelDescription.value = channel.description || "";
   editChannelImage.value = null;
   editChannelImagePreview.value = channel.imageUrl || "";
   showEditModal.value = true;
@@ -181,7 +174,6 @@ async function handleUpdateChannel() {
 
     const metadata = {
       name: editChannelName.value,
-      description: editChannelDescription.value,
     };
 
     if (editChannelImage.value) {
@@ -260,15 +252,6 @@ function closeEditModal() {
               placeholder="nouveau-channel"
             />
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="channelDescription">Description</label>
-          <textarea
-            id="channelDescription"
-            v-model="newChannel.description"
-            placeholder="Ajouter une description..."
-          ></textarea>
         </div>
 
         <div class="form-group">
@@ -378,11 +361,6 @@ function closeEditModal() {
               </button>
             </div>
           </div>
-          <div class="channel-content">
-            <p class="channel-description">
-              {{ channel.description || "Aucune description" }}
-            </p>
-          </div>
         </li>
       </ul>
     </div>
@@ -411,15 +389,6 @@ function closeEditModal() {
                 placeholder="nom-du-channel"
               />
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="editChannelDescription">Description</label>
-            <textarea
-              id="editChannelDescription"
-              v-model="editChannelDescription"
-              placeholder="Ajouter une description..."
-            ></textarea>
           </div>
 
           <div class="form-group">

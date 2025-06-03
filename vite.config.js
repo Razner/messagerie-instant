@@ -67,8 +67,6 @@ export default defineConfig({
               const newChannel = {
                 id: nextChannelId++,
                 name: channelData.name,
-                description: channelData.description || '',
-                isPrivate: channelData.isPrivate || false,
                 createdAt: new Date().toISOString(),
                 imageUrl: null
               };
@@ -135,10 +133,6 @@ export default defineConfig({
 
               if (metadata.name) {
                 mockChannels[index].name = metadata.name;
-              }
-
-              if (Object.prototype.hasOwnProperty.call(metadata, 'description')) {
-                mockChannels[index].description = metadata.description;
               }
 
               if (Object.prototype.hasOwnProperty.call(metadata, 'image')) {

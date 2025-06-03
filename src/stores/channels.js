@@ -89,10 +89,6 @@ export async function updateChannelMetadata(channelId, metadata) {
       formData.append('name', metadata.name);
     }
 
-    if (metadata.description !== undefined) {
-      formData.append('description', metadata.description);
-    }
-
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -113,10 +109,6 @@ export async function updateChannelMetadata(channelId, metadata) {
       const data = {
         name: metadata.name
       };
-
-      if (metadata.description !== undefined) {
-        data.description = metadata.description;
-      }
 
       if (metadata.image === null) {
         data.image = null;

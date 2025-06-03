@@ -18,7 +18,6 @@
           </div>
           <div class="conversation-info">
             <div class="conversation-name">{{ channel.name }}</div>
-            <div class="conversation-last-message">{{ channel.description || 'Aucun message' }}</div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  overflow: scroll;
 }
 
 :root {
@@ -338,12 +339,6 @@ button:disabled {
   color: var(--text-lighter);
   display: flex;
   align-items: center;
-}
-
-.channel-description {
-  color: var(--text-muted);
-  margin: 5px 0 0;
-  font-size: 0.9em;
 }
 
 .loading, .no-channels {
